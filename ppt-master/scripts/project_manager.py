@@ -2,10 +2,10 @@
 """PPT Master project management helpers.
 
 Usage:
-    python3 scripts/project_manager.py init <project_name> [--format ppt169] [--dir projects]
-    python3 scripts/project_manager.py import-sources <project_path> <source1> [<source2> ...] [--move | --copy]
-    python3 scripts/project_manager.py validate <project_path>
-    python3 scripts/project_manager.py info <project_path>
+    python scripts/project_manager.py init <project_name> [--format ppt169] [--dir projects]
+    python scripts/project_manager.py import-sources <project_path> <source1> [<source2> ...] [--move | --copy]
+    python scripts/project_manager.py validate <project_path>
+    python scripts/project_manager.py info <project_path>
 """
 
 from __future__ import annotations
@@ -607,6 +607,19 @@ class ProjectManager:
                     summary["notes"].append(note)
                 continue
 
+            # ── move/copy companion _files/ directory alongside the source ──
+            # Some converters (or the user) attach a <stem>_files/ directory
+            # next to the source file. Move/copy it alongside so it stays
+            # co-located with the archived source (e.g. a moved DOCX still
+            # has its _files/ dir available for subsequent propagation).
+            companion_asset_dir = self._companion_asset_dir(source_path)
+            if companion_asset_dir is not None and effective_move:
+                self._copy_or_move_tree(
+                    companion_asset_dir,
+                    sources_dir / f"{source_path.stem}_files",
+                    move=True,   # always move; source is already being moved
+                )
+
             archived_path = self._copy_or_move_file(
                 source_path,
                 sources_dir / source_path.name,
@@ -704,6 +717,9 @@ class ProjectManager:
                 try:
                     self._import_doc(archived_path, markdown_path)
                     summary["markdown"].append(str(markdown_path))
+                    # doc_to_md.py creates a <markdown_stem>_files/ directory
+                    # in sources_dir alongside the markdown (not beside the original docx).
+                    # Propagate from the correct location (markdown's companion dir).
                     self._propagate_companion_image_assets(markdown_path, project_dir)
                 except Exception as exc:  # pragma: no cover - summary path
                     summary["skipped"].append(f"{item}: document conversion failed ({exc})")
@@ -807,6 +823,10 @@ def main() -> None:
     if command in {"-h", "--help", "help"}:
         print_usage()
         sys.exit(0)
+
+    # Windows compatibility: prefer 'python' over 'python3' when available
+    # (Windows typically has 'python' in PATH, not 'python3')
+    _python_executable = sys.executable
 
     manager = ProjectManager()
 

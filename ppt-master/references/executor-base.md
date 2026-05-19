@@ -146,8 +146,9 @@ Before drawing each page, look up its entry in `page_charts` to decide which cha
 - **Generation rhythm**: lock global design context first, then generate pages sequentially in one continuous context. No batched groups (e.g., 5 at a time).
 - **Phased batch generation** (recommended):
   1. **Visual Construction Phase**: generate all SVG pages sequentially for visual consistency. Use layout judgment for chart marks during the draft. **MUST embed plot-area markers** per §3.1 below on every chart page — coordinate calibration is a post-generation step (see [`workflows/verify-charts.md`](../workflows/verify-charts.md)) that depends on these markers.
-  2. **Quality Check Gate**: run `python3 scripts/svg_quality_checker.py <project_path>` on `svg_output/`. Any `error` (banned features, viewBox mismatch, spec_lock drift, non-PPT-safe font, etc.) MUST be fixed on the offending page before proceeding — regenerate and re-check. Address `warning`s when straightforward. Do NOT defer to after `finalize_svg.py` — finalize rewrites SVG and masks some violations.
-  3. **Logic Construction Phase**: after SVGs pass the quality check, batch-generate speaker notes for narrative continuity.
+  2. **Per-Page Quality Gate**: after writing each SVG page, run the quality checker for that **single file only** (`python3 scripts/svg_quality_checker.py <project>/svg_output/<file>.svg`). Fix errors immediately before proceeding to the next page. This prevents error accumulation and avoids the "check all → regenerate all" loop. The full-deck safety-net check runs after all pages pass.
+  3. **Quality Check Gate (Safety Net)**: after all SVGs pass per-page checks, run `python3 scripts/svg_quality_checker.py <project>` on the full directory. Any remaining `error` should be isolated to one page — fix only that page, re-check only that page. `warning`s: fix when straightforward, acknowledge and release otherwise.
+  4. **Logic Construction Phase**: after SVGs pass the quality check, batch-generate speaker notes for narrative continuity.
 
 ### 3.1 Chart Plot-Area Marker (MANDATORY on every chart page)
 

@@ -28,8 +28,17 @@ description: Start the browser SVG editor when it is not running, and apply subm
 
 **Precondition**: no preview service running on this project.
 
+**Port conflict detection — MANDATORY before starting**: run `netstat -ano | Select-String ":5050"` first. If any process is already listening on port 5050, kill it before starting:
 ```bash
-python3 ${SKILL_DIR}/scripts/svg_editor/server.py <project_path>
+# Find PIDs listening on 5050
+netstat -ano | Select-String ":5050.*LISTENING"
+# Kill each PID (replace <PID> with actual process IDs found)
+taskkill /PID <PID> /F
+```
+Multiple servers can bind to the same port on Windows (SO_REUSEADDR), but only the first-started one actually receives requests — others silently fail. Always clear stale processes before starting a new server.
+
+```bash
+python ${SKILL_DIR}/scripts/svg_editor/server.py <project_path>
 ```
 
 (Plain mode — no `--live`. The `--live` flag is reserved for Step 6's auto-startup.)
@@ -52,7 +61,7 @@ Triggered by the user signals listed in "When to Run".
 
 1. Discover annotations:
    ```bash
-   python3 ${SKILL_DIR}/scripts/check_annotations.py <project_path>
+   python ${SKILL_DIR}/scripts/check_annotations.py <project_path>
    ```
    The output already lists each pending change as `file → element_id → annotation text → content preview`. Use it directly as the to-do list; no need to re-parse SVG attributes yourself.
 2. If the output says no annotations: tell the user, stop.
@@ -61,8 +70,8 @@ Triggered by the user signals listed in "When to Run".
    - Remove `data-edit-target` and `data-edit-annotation` from that element.
 4. Re-export:
    ```bash
-   python3 ${SKILL_DIR}/scripts/finalize_svg.py <project_path>
-   python3 ${SKILL_DIR}/scripts/svg_to_pptx.py <project_path>
+   python ${SKILL_DIR}/scripts/finalize_svg.py <project_path>
+   python ${SKILL_DIR}/scripts/svg_to_pptx.py <project_path>
    ```
 5. Tell the user (in their language): annotations applied, new PPTX exported, preview is still running. If the browser still shows the old slide, refresh or reselect the page.
 6. Loop: more annotations submitted → repeat from step 1. User signals done or "stop preview" → end.
@@ -86,9 +95,7 @@ Triggered by the user signals listed in "When to Run".
 If the project lives on a remote Linux server, run with `--no-browser`:
 
 ```bash
-python3 ${SKILL_DIR}/scripts/svg_editor/server.py <project_path> --no-browser
-# or for Step 6's auto-startup on a remote host:
-python3 ${SKILL_DIR}/scripts/svg_editor/server.py <project_path> --live --no-browser
+python ${SKILL_DIR}/scripts/svg_editor/server.py <project_path> --live --no-browser
 ```
 
 - **VS Code / Cursor Remote-SSH**: open the **PORTS** panel (`Ctrl+Shift+P` → `Ports: Focus on Ports View`), click **Forward a Port**, enter `5050`. The workspace remembers it.

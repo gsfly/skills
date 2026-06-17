@@ -1,7 +1,6 @@
 ---
 name: agent-reach
-description: >
-  MUST USE when user wants to 调研/research/搜索/search/查/找/look up anything
+description: MUST USE when user wants to 调研/research/搜索/search/查/找/look up anything
   on the internet — e.g. 全网调研 X / 帮我调研一下 X / 查一下 X / 搜搜 X /
   看看大家怎么评价 X / X 上有什么讨论 / research this topic。
 

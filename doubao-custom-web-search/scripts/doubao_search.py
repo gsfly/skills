@@ -132,7 +132,7 @@ def search(
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Search with Doubao Custom API")
-    parser.add_argument("query", help="1-100 character search query")
+    parser.add_argument("--query", help="1-100 character search query")
     parser.add_argument("--type", dest="search_type", choices=("web", "image"), default="web")
     parser.add_argument("--count", type=int)
     parser.add_argument("--need-content", action="store_true")

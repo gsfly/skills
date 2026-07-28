@@ -9,6 +9,22 @@ description: 使用豆包搜索 Custom 版 API 执行网页或图片联网搜索
 
 详细字段、响应结构和错误码见 [references/api-reference.md](references/api-reference.md)。需要调用 API 时先读该文件。
 
+## 使用执行脚本
+
+调用 API 时使用 [scripts/doubao_search.py](scripts/doubao_search.py)，不要在每次任务中重新手写 HTTP 客户端。脚本只依赖 Python 标准库，默认输出完整 JSON 响应，供后续回答提取来源和结果。
+
+先设置凭据，再执行搜索：
+
+```powershell
+$env:DOUBAO_SEARCH_API_KEY = "<API_KEY>"
+python scripts/doubao_search.py "北京最新天气" --type web --count 5 --need-content --need-url
+python scripts/doubao_search.py "北京故宫" --type image --count 5 --image-shapes 横长方形
+```
+
+常用参数对应 API 字段：`--sites`、`--block-hosts`、`--auth-info-level`、`--time-range`、`--content-formats`、`--industry`、`--query-rewrite`，图片参数为 `--image-width-min`、`--image-height-min`、`--image-width-max`、`--image-height-max`、`--image-shapes`。脚本会校验 `Query`、`SearchType` 和 `Count`，缺少 `DOUBAO_SEARCH_API_KEY` 或 API 返回错误时以非零状态退出。
+
+脚本默认使用 API Key URL。如确需测试代理或兼容端点，可传 `--endpoint`；不要把 Key 作为命令行参数传入，避免进入 shell 历史记录。
+
 ## 凭据与接入
 
 优先使用 API Key 接入：

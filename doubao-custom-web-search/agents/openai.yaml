@@ -1,0 +1,4 @@
+interface:
+  display_name: "豆包 Custom 联网搜索"
+  short_description: "使用豆包搜索 Custom API 获取网页和图片结果"
+  default_prompt: "使用豆包搜索 Custom API 搜索最新网页或图片信息，并基于结果给出带来源的回答。"

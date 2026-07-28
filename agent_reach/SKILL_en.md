@@ -10,7 +10,7 @@ description: >
   Xiaoyuzhou Podcast, LinkedIn/jobs/recruiting, V2EX, Xueqiu (stocks), RSS.
 
   13 platforms, multi-backend routing (OpenCLI / per-platform CLIs / APIs).
-  Zero config for 6 channels. Run `agent-reach doctor --json` to see which
+  Zero config for 6 channels. Run `agent-reach doctor` to see which
   backend serves each platform right now.
 
   NOT for: writing reports/analysis/translation (this skill only FETCHES
@@ -29,7 +29,7 @@ these platforms — do not invent your own approach.**
 ## Standing rules (apply for the whole session)
 
 1. **Health-check before acting**: for multi-backend platforms (XiaoHongShu /
-   Reddit / Bilibili / Twitter), run `agent-reach doctor --json` first and
+   Reddit / Bilibili / Twitter), run `agent-reach doctor` first and
    pick the command group matching each platform's `active_backend`.
 2. **Announce what you use**: say "using agent-reach, platform X via backend Y"
    before starting.
@@ -96,7 +96,7 @@ opencli xiaohongshu search "query" -f yaml
 
 ```bash
 # Channel availability + which backend serves each platform
-agent-reach doctor --json
+agent-reach doctor
 ```
 
 ## Workspace rules

@@ -10,7 +10,7 @@ description: MUST USE when user wants to 调研/research/搜索/search/查/找/l
   雪球/股票行情, RSS feeds, or any web URL.
 
   13 platforms, multi-backend routing (OpenCLI / per-platform CLIs / APIs).
-  Zero config for 6 channels. Run `agent-reach doctor --json` to see which
+  Zero config for 6 channels. Run `agent-reach doctor` to see which
   backend serves each platform right now.
 
   NOT for: 写报告/数据分析/翻译等内容加工（本 skill 只负责从互联网获取内容）；
@@ -44,7 +44,7 @@ metadata:
 ## 常驻规则（全程适用）
 
 1. **动手前先体检**：多后端平台（小红书/Reddit/B站/Twitter）先跑
-   `agent-reach doctor --json`，按各平台 `active_backend` 字段选命令组。
+   `agent-reach doctor`，按各平台 `active_backend` 字段选命令组。
 2. **声明你在用什么**：开始干活前说一句「使用 agent-reach 的 X 平台 / Y 后端」。
 3. **失败按 references 里的重试链处理**，不要瞎猜命令。
 4. **全网调研类任务**：组合多平台（Exa 搜索 + Twitter/Reddit 看讨论 + 小红书/B站看中文场景），并行收集再汇总。
@@ -105,7 +105,7 @@ opencli xiaohongshu search "query" -f yaml
 
 ```bash
 # 检查可用 channel 与每个平台当前激活的后端
-agent-reach doctor --json
+agent-reach doctor
 ```
 
 ## 工作区规则

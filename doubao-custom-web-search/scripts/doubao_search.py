@@ -89,7 +89,7 @@ def search(
     count: int | None = None,
     **options: Any,
 ) -> dict[str, Any]:
-    api_key = API_KEY_ENV
+    api_key = os.environ.get(API_KEY_ENV, "").strip()
     if not api_key:
         raise SearchError(f"Set {API_KEY_ENV} before searching")
     endpoint = options.pop("endpoint", DEFAULT_ENDPOINT)
